@@ -1,3 +1,6 @@
+@import "../styles/_variables.scss";
+@import "../styles/_keyframe-animations.scss";
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -122,5 +125,14 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
