@@ -10,7 +10,7 @@ export default function Page() {
   const [content, setContent] = useState<string>("");
 
   return (
-    <div className="relative mx-auto my-20 max-w-xl">
+    <div className="relative mx-auto my-20 max-w-2xl 2xl:max-w-3xl">
       {/* Mode toggle */}
 
       <Tabs defaultValue="edit">
