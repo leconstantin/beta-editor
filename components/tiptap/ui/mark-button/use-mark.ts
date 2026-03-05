@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import {
   BoldIcon,
   ItalicIcon,
@@ -191,8 +192,14 @@ export function useMark(config: UseMarkConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canToggle = canToggleMark(editor, type);
-  const isActive = isMarkActive(editor, type);
+
+  const { isActive, canToggle } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      isActive: isMarkActive(ctx.editor, type),
+      canToggle: canToggleMark(ctx.editor, type),
+    }),
+  }) || { isActive: false, canToggle: false };
 
   useEffect(() => {
     if (!editor) {

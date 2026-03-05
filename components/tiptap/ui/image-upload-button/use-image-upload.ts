@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { ImagePlusIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -155,8 +156,14 @@ export function useImageUpload(config?: UseImageUploadConfig) {
   const { editor } = useTiptapEditor(providedEditor);
   const isMobile = useIsBreakpoint();
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canInsert = canInsertImage(editor);
-  const isActive = isImageActive(editor);
+
+  const { canInsert, isActive } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      canInsert: canInsertImage(ctx.editor),
+      isActive: isImageActive(ctx.editor),
+    }),
+  }) || { canInsert: false, isActive: false };
 
   useEffect(() => {
     if (!editor) {

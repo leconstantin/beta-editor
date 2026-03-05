@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { HighlighterIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -294,11 +295,19 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
   const { editor } = useTiptapEditor(providedEditor);
   const isMobile = useIsBreakpoint();
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canColorHighlightState = canColorHighlight(editor, mode);
+
   const actualColor = highlightColor
     ? getHighlightColorValue(highlightColor, useColorValue)
     : highlightColor;
-  const isActive = isColorHighlightActive(editor, actualColor, mode);
+
+  const { canColorHighlight: canColorHighlightState, isActive } =
+    useEditorState({
+      editor,
+      selector: (ctx) => ({
+        canColorHighlight: canColorHighlight(ctx.editor, mode),
+        isActive: isColorHighlightActive(ctx.editor, actualColor, mode),
+      }),
+    }) || { canColorHighlight: false, isActive: false };
 
   useEffect(() => {
     if (!editor) {

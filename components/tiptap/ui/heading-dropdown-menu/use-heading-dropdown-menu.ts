@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { useEffect, useState } from "react";
 
 // --- Hooks ---
@@ -100,9 +101,22 @@ export function useHeadingDropdownMenu(config?: UseHeadingDropdownMenuConfig) {
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = useState(true);
 
-  const activeLevel = getActiveHeadingLevel(editor, levels);
-  const isActive = isHeadingActive(editor);
-  const canToggleState = canToggle(editor);
+  const {
+    activeLevel,
+    isActive,
+    canToggle: canToggleState,
+  } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      activeLevel: getActiveHeadingLevel(ctx.editor, levels),
+      isActive: isHeadingActive(ctx.editor),
+      canToggle: canToggle(ctx.editor),
+    }),
+  }) || {
+    activeLevel: undefined,
+    isActive: false,
+    canToggle: false,
+  };
 
   useEffect(() => {
     if (!editor) {

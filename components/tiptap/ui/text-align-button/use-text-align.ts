@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChainedCommands, Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import {
   TextAlignCenterIcon,
   TextAlignEndIcon,
@@ -195,8 +196,14 @@ export function useTextAlign(config: UseTextAlignConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canAlign = canSetTextAlign(editor, align);
-  const isActive = isTextAlignActive(editor, align);
+
+  const { isActive, canAlign } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      isActive: isTextAlignActive(ctx.editor, align),
+      canAlign: canSetTextAlign(ctx.editor, align),
+    }),
+  }) || { isActive: false, canAlign: false };
 
   useEffect(() => {
     if (!editor) {

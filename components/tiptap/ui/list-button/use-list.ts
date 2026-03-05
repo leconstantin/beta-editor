@@ -2,6 +2,7 @@
 
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { useCallback, useEffect, useState } from "react";
 
 // --- Icons ---
@@ -325,8 +326,14 @@ export function useList(config: UseListConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canToggle = canToggleList(editor, type);
-  const isActive = isListActive(editor, type);
+
+  const { isActive, canToggle } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      isActive: isListActive(ctx.editor, type),
+      canToggle: canToggleList(ctx.editor, type),
+    }),
+  }) || { isActive: false, canToggle: false };
 
   useEffect(() => {
     if (!editor) {

@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { useCallback, useEffect, useState } from "react";
 
 // --- Hooks ---
@@ -217,8 +218,13 @@ export function useLinkState(props: {
 }) {
   const { editor, hideWhenUnavailable = false } = props;
 
-  const canSet = canSetLink(editor);
-  const isActive = isLinkActive(editor);
+  const { canSet, isActive } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      canSet: canSetLink(ctx.editor),
+      isActive: isLinkActive(ctx.editor),
+    }),
+  }) || { canSet: false, isActive: false };
 
   const [isVisible, setIsVisible] = useState(true);
 

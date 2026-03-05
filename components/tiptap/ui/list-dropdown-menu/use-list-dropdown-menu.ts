@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { useEffect, useMemo, useState } from "react";
 
 // --- Icons ---
@@ -184,9 +185,22 @@ export function useListDropdownMenu(config?: UseListDropdownMenuConfig) {
 
   const filteredLists = useMemo(() => getFilteredListOptions(types), [types]);
 
-  const canToggleAny = canToggleAnyList(editor, types);
-  const isAnyActive = isAnyListActive(editor, types);
-  const activeType = getActiveListType(editor, types);
+  const {
+    canToggle: canToggleAny,
+    isActive: isAnyActive,
+    activeType,
+  } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      canToggle: canToggleAnyList(ctx.editor, types),
+      isActive: isAnyListActive(ctx.editor, types),
+      activeType: getActiveListType(ctx.editor, types),
+    }),
+  }) || {
+    canToggle: false,
+    isActive: false,
+    activeType: undefined as ListType | undefined,
+  };
   const activeList = filteredLists.find((option) => option.type === activeType);
 
   useEffect(() => {

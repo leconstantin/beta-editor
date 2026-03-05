@@ -2,6 +2,7 @@
 
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { useCallback, useEffect, useState } from "react";
 
 // --- Hooks ---
@@ -244,8 +245,17 @@ export function useBlockquote(config?: UseBlockquoteConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canToggle = canToggleBlockquote(editor);
-  const isActive = editor?.isActive("blockquote");
+
+  const { isActive, canToggle } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      isActive: ctx.editor?.isActive("blockquote"),
+      canToggle: canToggleBlockquote(ctx.editor),
+    }),
+  }) || {
+    isActive: false,
+    canToggle: false,
+  };
 
   useEffect(() => {
     if (!editor) {

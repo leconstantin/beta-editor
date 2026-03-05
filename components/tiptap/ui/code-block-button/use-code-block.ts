@@ -2,6 +2,7 @@
 
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { useCallback, useEffect, useState } from "react";
 // --- Icons ---
 import { CodeBlockIcon } from "@/components/tiptap/icons/code-block-icon";
@@ -248,8 +249,14 @@ export function useCodeBlock(config?: UseCodeBlockConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canToggleState = canToggle(editor);
-  const isActive = editor?.isActive("codeBlock");
+
+  const { isActive, canToggle: canToggleState } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      isActive: ctx.editor?.isActive("codeBlock"),
+      canToggle: canToggle(ctx.editor),
+    }),
+  }) || { isActive: false, canToggle: false };
 
   useEffect(() => {
     if (!editor) {

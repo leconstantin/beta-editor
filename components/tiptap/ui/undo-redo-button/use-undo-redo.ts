@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import { useCallback, useEffect, useState } from "react";
 
 // --- Icons ---
@@ -153,7 +154,13 @@ export function useUndoRedo(config: UseUndoRedoConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canExecute = canExecuteUndoRedoAction(editor, action);
+
+  const { canExecute } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      canExecute: canExecuteUndoRedoAction(ctx.editor, action),
+    }),
+  }) || { canExecute: false };
 
   useEffect(() => {
     if (!editor) {

@@ -2,6 +2,7 @@
 
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import {
   Heading1Icon,
   Heading2Icon,
@@ -319,8 +320,14 @@ export function useHeading(config: UseHeadingConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const canToggleState = canToggle(editor, level);
-  const isActive = isHeadingActive(editor, level);
+
+  const { isActive, canToggle: canToggleState } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      isActive: isHeadingActive(ctx.editor, level),
+      canToggle: canToggle(ctx.editor, level),
+    }),
+  }) || { isActive: false, canToggle: false };
 
   useEffect(() => {
     if (!editor) {
