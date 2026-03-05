@@ -7,7 +7,7 @@ import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { TextAlign } from "@tiptap/extension-text-align";
 import { Typography } from "@tiptap/extension-typography";
-import { Selection } from "@tiptap/extensions";
+import { Placeholder, Selection } from "@tiptap/extensions";
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit";
@@ -57,7 +57,6 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
-import content from "./content.json";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -157,7 +156,15 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function CustomEditor() {
+export function CustomEditor({
+  onChange,
+  value,
+  editable = true,
+}: {
+  onChange?: (value: string) => void;
+  value: string;
+  editable?: boolean;
+}) {
   const isMobile = useIsBreakpoint();
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
     "main",
@@ -166,6 +173,7 @@ export function CustomEditor() {
 
   const editor = useEditor({
     immediatelyRender: false,
+    editable,
     editorProps: {
       attributes: {
         autocomplete: "off",
@@ -182,6 +190,9 @@ export function CustomEditor() {
           openOnClick: false,
           enableClickSelection: true,
         },
+      }),
+      Placeholder.configure({
+        placeholder: "Type here...",
       }),
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
@@ -201,7 +212,10 @@ export function CustomEditor() {
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content,
+    content: value,
+    onUpdate: ({ editor }) => {
+      onChange?.(editor.getHTML());
+    },
   });
 
   useEffect(() => {
@@ -209,28 +223,35 @@ export function CustomEditor() {
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
+  useEffect(() => {
+    if (editor && editor.isEditable !== editable) {
+      editor.setEditable(editable); // <-- sync when prop changes
+    }
+  }, [editor, editable]);
 
   return (
     <EditorContext.Provider value={{ editor }}>
-      <div className="sticky top-0 z-10 flex h-full w-full border-b bg-background p-1">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex items-center gap-2" ref={toolbarRef}>
-            {mobileView === "main" ? (
-              <MainToolbarContent
-                isMobile={isMobile}
-                onHighlighterClick={() => setMobileView("highlighter")}
-                onLinkClick={() => setMobileView("link")}
-              />
-            ) : (
-              <MobileToolbarContent
-                onBack={() => setMobileView("main")}
-                type={mobileView === "highlighter" ? "highlighter" : "link"}
-              />
-            )}
-          </div>
-          <ScrollBar className="hidden" orientation="horizontal" />
-        </ScrollArea>
-      </div>
+      {editable && (
+        <div className="sticky top-0 z-10 flex h-full w-full border-b bg-background p-1">
+          <ScrollArea className="w-full whitespace-nowrap">
+            <div className="flex items-center gap-2" ref={toolbarRef}>
+              {mobileView === "main" ? (
+                <MainToolbarContent
+                  isMobile={isMobile}
+                  onHighlighterClick={() => setMobileView("highlighter")}
+                  onLinkClick={() => setMobileView("link")}
+                />
+              ) : (
+                <MobileToolbarContent
+                  onBack={() => setMobileView("main")}
+                  type={mobileView === "highlighter" ? "highlighter" : "link"}
+                />
+              )}
+            </div>
+            <ScrollBar className="hidden" orientation="horizontal" />
+          </ScrollArea>
+        </div>
+      )}
 
       <EditorContent className="p-4" editor={editor} role="presentation" />
     </EditorContext.Provider>
