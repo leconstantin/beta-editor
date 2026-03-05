@@ -57,6 +57,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
+import content from "./content.json";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -212,7 +213,7 @@ export function CustomEditor({
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content: value,
+    content: value.length > 0 ? value : content,
     onUpdate: ({ editor }) => {
       onChange?.(editor.getHTML());
     },
