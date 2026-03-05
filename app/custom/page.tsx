@@ -1,4 +1,4 @@
-import { CustomEditor } from "@/components/tiptap-templates/simple/custom";
+import { CustomEditor } from "@/components/tiptap/custom";
 
 export default function Page() {
   return (
