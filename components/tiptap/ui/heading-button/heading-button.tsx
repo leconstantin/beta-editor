@@ -10,11 +10,11 @@ import {
   HEADING_SHORTCUT_KEYS,
   useHeading,
 } from "@/components/tiptap/ui/heading-button";
-import { Badge } from "@/components/tiptap/ui-primitive/badge";
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap/ui-primitive/button";
 import { Button } from "@/components/tiptap/ui-primitive/button";
+import { Badge } from "@/components/ui/badge";
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 // --- Lib ---
 import { parseShortcutKeys } from "@/lib/tiptap-utils";

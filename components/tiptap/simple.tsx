@@ -16,7 +16,6 @@ import { HorizontalRule } from "@/components/tiptap/node/horizontal-rule-node/ho
 // --- Tiptap Node ---
 import { ImageUploadNode } from "@/components/tiptap/node/image-upload-node/image-upload-node-extension";
 // --- UI Primitives ---
-import { Button } from "@/components/tiptap/ui-primitive/button";
 import { Spacer } from "@/components/tiptap/ui-primitive/spacer";
 import {
   Toolbar,
@@ -59,6 +58,7 @@ import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
 import { useWindowSize } from "@/hooks/use-window-size";
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
+import { Button } from "../ui/button";
 import content from "./content.json";
 
 const MainToolbarContent = ({

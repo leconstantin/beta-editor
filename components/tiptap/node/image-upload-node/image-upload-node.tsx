@@ -3,9 +3,9 @@
 import type { NodeViewProps } from "@tiptap/react";
 import { NodeViewWrapper } from "@tiptap/react";
 import { useRef, useState } from "react";
-import { Button } from "@/components/tiptap/ui-primitive/button";
 import "@/components/tiptap/node/image-upload-node/image-upload-node.scss";
 import { XIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { focusNextNode, isValidPosition } from "@/lib/tiptap-utils";
 
 export interface FileItem {
